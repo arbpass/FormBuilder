@@ -36,8 +36,8 @@ router.get('/dashboard/form/responses/:id', async (req, res) => {
 
 router.post('/dashboard/save', async (req, res) => {
     try {
-        const { title, description, owner, fields } = req.body;
-        const addForm = new forms({ title, description, owner, fields });
+        const { title, description, owner, active, coverImg, fields } = req.body;
+        const addForm = new forms({ title, description, owner, active, coverImg, fields });
         await addForm.save();
 
         res.status(201).json("Form saved successfully!");
@@ -50,10 +50,10 @@ router.post('/dashboard/save', async (req, res) => {
 router.post('/dashboard/update/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, fields } = req.body;
+        const { title, description, coverImg, fields } = req.body;
         const formToBeEdited = await forms.findOne({ _id: id });
         await forms.updateOne({ _id: formToBeEdited._id }, {
-            $set: { title, description, fields, lastModified: Date.now() }
+            $set: { title, description, coverImg, fields, lastModified: Date.now() }
         });
         res.status(201).json('Form updated successfully!');
     } catch (error) {
@@ -68,6 +68,28 @@ router.post('/dashboard/delete/:id', async (req, res) => {
         const formToBeDeleted = await forms.findOne({ _id: id });
         await forms.deleteOne({ _id: formToBeDeleted._id });
         res.status(201).json('Form deleted successfully!');
+    } catch (error) {
+        console.log(error);
+        res.status(500).json("Something went wrong!");
+    }
+})
+
+router.post('/dashboard/status/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const formToBeEdited = await forms.findOne({ _id: id });
+        if (formToBeEdited.active) {
+            await forms.updateOne({ _id: formToBeEdited._id }, {
+                $set: { active: false, lastModified: Date.now() }
+            });
+            res.status(201).json('Form deactivated successfully!');
+        }
+        else {
+            await forms.updateOne({ _id: formToBeEdited._id }, {
+                $set: { active: true, lastModified: Date.now() }
+            });
+            res.status(201).json('Form activated successfully!');
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json("Something went wrong!");

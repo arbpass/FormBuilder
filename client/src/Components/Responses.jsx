@@ -14,7 +14,7 @@ export const Responses = () => {
 
     const getForms = async () => {
         setLoading(true);
-        const response = await fetch(`http://localhost:4000/dashboard/form/responses/${id}`, {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/dashboard/form/responses/${id}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         }).then((response) => response.json());

@@ -17,7 +17,7 @@ export const Form = () => {
 
   const getForms = async () => {
     setLoading(true);
-    const response = await fetch(`http://localhost:4000/user/form/${id}`, {
+    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/user/form/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     }).then((response) => response.json());
@@ -55,7 +55,7 @@ export const Form = () => {
       return;
     }
 
-    fetch(`http://localhost:4000/user/form/${id}`, {
+    fetch(`${process.env.REACT_APP_BASE_URL}/user/form/${id}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,10 +79,10 @@ export const Form = () => {
       });
   };
 
-  const handleUser= (e)=> {
+  const handleUser = (e) => {
     setUser(e.target.value);
   }
-  
+
   return (
     <>
       <div className='mx-5 sm:mx-16 lg:mx-32'>
@@ -90,7 +90,7 @@ export const Form = () => {
 
           <h1 className='rounded-lg mb-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 w-full bg-transparent p-2 text-white text-3xl'>Title: {data.title}</h1>
           <h2 className='rounded-lg mb-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 w-full bg-transparent p-2 text-white text-lg'>Description: {data.description}</h2>
-          <input className='rounded-lg outline-none w-full backdrop-blur-lg bg-opacity-50 bg-zinc-900 p-2 text-white text-sm' placeholder='Your Name' value={user} onChange={handleUser}/>
+          <input className='rounded-lg outline-none w-full backdrop-blur-lg bg-opacity-50 bg-zinc-900 p-2 text-white text-sm' placeholder='Your Name' value={user} onChange={handleUser} />
         </div>
 
         <div className='mt-4 rounded-xl border-2 border-white'>
@@ -101,8 +101,11 @@ export const Form = () => {
               {item.required ? <span className='text-red-500 text-2xl'>*</span> : null}
               <h4 className='w-full bg-transparent p-2 text-white text-sm' placeholder='Description'>{item.label}</h4>
 
-              {item.options.map((item2, index) => (
-                <input className='w-full bg-transparent p-2 text-white text-sm' placeholder='Description' value={item2} />
+              {item.options.map((item2, index2) => (
+                <div className='flex'>
+                  <span className='text-red-500 text-md mt-1'>{index2+1}.</span>
+                  <input className='w-full bg-transparent p-2 text-white text-sm' placeholder='Description' value={item2} />
+                </div>
               ))}
               <input className='rounded-lg mb-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-sm' placeholder='Answer' value={ans[item.name]} onChange={(e) => handleAns(e, item.name)} />
             </div>

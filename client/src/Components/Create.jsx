@@ -6,10 +6,13 @@ export const Create = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState([{ title: 'Title', description: 'Description' }]);
   const [questions, setQuestions] = useState([]);
+  const [img, setImg] = useState('https://picsum.photos/1280/720');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     owner: '',
+    active: true,
+    coverImg: '',
     fields: {
       name: "",
       label: "",
@@ -79,6 +82,7 @@ export const Create = () => {
     formData.description = form[0].description;
     formData.owner = 'ayush';
     formData.fields = questions;
+    formData.coverImg = img;
 
     // Data validation
     if (!formData.title) {
@@ -86,7 +90,7 @@ export const Create = () => {
       return;
     }
 
-    fetch('dashboard/save', {
+    fetch(`${process.env.REACT_APP_BASE_URL}/dashboard/save`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -112,17 +116,25 @@ export const Create = () => {
   };
   // console.log(questions)
 
+  const handleImg = (e) => {
+    setImg(e.target.value);
+  }
 
   return (
     <>
       <div className='mx-5 sm:mx-16 lg:mx-32'>
-        <div className='p-4 mt-4 rounded-xl' style={{ backgroundImage: "url('https://picsum.photos/1280/720')", backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
+        <div className='p-4 mt-4 rounded-xl' style={{ backgroundImage: `url(${img})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
 
           <button className="float-right rounded-md backdrop-blur-lg bg-opacity-50 bg-zinc-900 text-lg text-white py-1 px-2 inline flex items-center font-bold mb-2" onClick={handleSubmit}>Save<img className='h-8 w-8 mx-2 float-right transform hover:scale-110 transition-all cursor-pointer' src="https://www.svgrepo.com/show/262793/diskette-save.svg" alt="" />
           </button>
 
           <input className='rounded-lg mb-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-3xl' placeholder='Question' value={form[0].title} onChange={handleTitleChange} />
           <input className='rounded-lg mb-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-lg' placeholder='Question' value={form[0].description} onChange={handleDescriptionChange} />
+
+          <div class="group relative">
+            <button class="px-4 py-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 text-white rounded hover:bg-lime-600 transition-all">Cover Image</button>
+            <input class="hidden absolute top-10 left-0 px-4 py-2 backdrop-blur-lg bg-opacity-50 bg-zinc-900 text-white rounded bg-white shadow-md w-1/2 transition-all group-hover:block" placeholder="Image Link" value={img} onChange={handleImg} />
+          </div>
         </div>
 
         <div className='mt-4 rounded-xl border-2 border-white'>
@@ -135,14 +147,17 @@ export const Create = () => {
 
           {questions.map((item, index) => (
             <div className='min-h-32 mx-4 my-4 p-4 rounded-xl border-4 border-white'>
-              <button className="bg-transparent text-white rounded-full float-right" onClick={() => handleRemove(item.name)}><img className='h-12 w-12' src='https://www.svgrepo.com/show/530501/delete.svg'/></button>
+              <button className="bg-transparent text-white rounded-full float-right" onClick={() => handleRemove(item.name)}><img className='h-12 w-12' src='https://www.svgrepo.com/show/530501/delete.svg' /></button>
               <input type="checkbox" className='' onChange={() => handleReqChange(item)} />
               <label className='text-red-500'> Required</label>
               <input className='w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-lg' placeholder='Question' value={item.name} onChange={(e) => handleNameChange(e, item.key)} />
               <input className='w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-sm' placeholder='Description' value={item.label} onChange={(e) => handleDescChange(e, item.key)} />
 
-              {item.options.map((item2, index) => (
-                <input className='w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-sm' placeholder='Description' value={item2} onChange={(e) => handleOptionsChange(e, index, item.key)} />
+              {item.options.map((item2, index2) => (
+                <div className='flex'>
+                  <span className='text-red-500 text-md mt-2'>{index2 + 1}.</span>
+                  <input className='w-full bg-transparent p-2 border-b border-gray-500 focus:border-blue-500 outline-none text-white text-sm' placeholder='Description' value={item2} onChange={(e) => handleOptionsChange(e, index2, item.key)} />
+                </div>
               ))}
             </div>
           ))}

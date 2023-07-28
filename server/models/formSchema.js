@@ -13,6 +13,14 @@ const formSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    active: {
+        type: Boolean,
+        required: true,
+    },
+    coverImg: {
+        type: String,
+        required: false,
+    },
     fields: [
         {
             name: {
